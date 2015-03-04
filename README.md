@@ -1,5 +1,4 @@
 # System-Diagnostic-Analysis
-what it do
 TODO:
 1. Testing
 2. Refactoring
