@@ -3,6 +3,7 @@ Created on Mar 3, 2015
 
 @author: Solaman
 '''
+from itertools import combinations as genCombinations
 
 class DedekindNode(object):
     '''
@@ -67,6 +68,16 @@ class DedekindNode(object):
         elif newMaxLevel == 0:
             return []
         elif newMaxLevel< self.inputSize:
+            combinations = genCombinations(self.acceptedConfigurations[-1], newMaxLevel)
+            possibleConfigurations = []
+            for combination in combinations:
+                possibleConfiguration = self.bitMask
+                for configuration in combination:
+                    possibleConfiguration &= configuration
+                if self.getConfigurationLevel(possibleConfiguration) == newMaxLevel:
+                    possibleConfigurations.append(possibleConfiguration)
+            return possibleConfigurations
+            '''
             possibleConfigurations = {}
             configurationLevel = self.acceptedConfigurations[-1]
             for configurationOne in configurationLevel:
@@ -75,6 +86,7 @@ class DedekindNode(object):
                     if self.getConfigurationLevel(possibleConfiguration) == newMaxLevel:
                         possibleConfigurations[ configurationOne & configurationTwo] = 0
             possibleConfigurations = possibleConfigurations.keys()
+            '''
         
         return possibleConfigurations
             
