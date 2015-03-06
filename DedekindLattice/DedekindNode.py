@@ -4,11 +4,29 @@ Created on Mar 3, 2015
 @author: Solaman
 '''
 from itertools import combinations as genCombinations
+from subprocess import call
+import os
+
+#Used for Dot file generation
+    #Once a node is written to a dot file
+    #A full Node is created to help
+fullNode = None
+    
+    #Used for Dot file generation
+    #Once a node is written to a dot file
+    #labels for each configuration are made
+configurationLabels = {}
+    
+    #Used for Dot file Generation
+    #Once a node is written to a dot file
+    #edges between configurations are written as dot edges.
+dotEdges = ""
 
 class DedekindNode(object):
     '''
     A boolean function. It is up to the user to ensure that it is monotone.
     '''
+    
     
     def __init__(self, inputSize, acceptedConfigurations, nodeToCopy = None):
         '''
@@ -42,7 +60,7 @@ class DedekindNode(object):
                 self.acceptedConfigurations.append( [acceptedConfiguration])
             else:
                 self.acceptedConfigurations[level].append( acceptedConfiguration)
-                          
+                                 
     def acceptedConfigurationsAsList(self):
         acceptedConfigurations = []
         for level in self.acceptedConfigurations:
@@ -118,6 +136,59 @@ class DedekindNode(object):
     
     def getConfigurationLevel(self, configuration):
         return hamming_distance(self.bitMask, configuration)
+    
+    def writeToDotFile(self, writeLocation):
+        global fullNode, configurationLabels, dotEdges
+        dotFileName = writeLocation + "\\" + "n_"+str(self.inputSize)+"."\
+                       + "world_"+str(self.getIndex())\
+                       + ".dot"
+        dotFile = open( dotFileName, "w")
+        dotFile.write("""digraph{
+        rankdir=BT
+        node[shape=circle, style=filled, label=""]
+        edge[dir=none]\n""")
+        
+        self.initDotVariables()
+        configurationList = self.acceptedConfigurationsAsList()
+        for configuration in fullNode.acceptedConfigurationsAsList():
+            if configuration in configurationList:
+                dotFile.write( configurationLabels[configuration] +" [ color = green, "\
+                               + "label = \""+ configurationLabels[configuration] + "\"]\n")
+            else:
+                dotFile.write( configurationLabels[configuration] +" [ color = red, "\
+                               + "label = \""+ configurationLabels[configuration] + "\"]\n")
+                    
+        dotFile.write(dotEdges)
+        dotFile.write("}")
+        
+        dotFile.close()
+        
+        pngFileName = dotFileName[:-3]+"png"
+        call("dot -Tpng " + os.getcwd()+"\\" + dotFileName + " -o " + os.getcwd() + "\\"+ pngFileName, shell=True)
+                        
+    def initDotVariables(self):
+        global fullNode, configurationLabels, dotEdges
+        '''
+        Helper function used to set up variables used for writing
+        a Dedekind Node to a dot file.
+        '''
+        if fullNode != None:
+            return
+        
+        fullNode = DedekindNode(self.inputSize, range(0, self.bitMask+1))
+        for configurationLevel in fullNode.acceptedConfigurations:
+            for configuration in configurationLevel:
+                configurationLabels[configuration] = bin(configuration)[1:]
+        for levelIndex in range(1, len(fullNode.acceptedConfigurations) ):
+            for configuration in fullNode.acceptedConfigurations[levelIndex]:
+                for parentConfiguration in fullNode.acceptedConfigurations[levelIndex - 1]:
+                    if hamming_distance(configuration, parentConfiguration) == 1:
+                        edgeString = configurationLabels[parentConfiguration] + " -> " \
+                            + configurationLabels[configuration] + "\n"
+                        dotEdges += edgeString
+        
+                
+                
         
 
 def hamming_distance( x, y):

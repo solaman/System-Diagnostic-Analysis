@@ -25,7 +25,7 @@ class DedekindLattice(object):
         '''
         if inputSize < 0:
             raise Exception("Input size must be greater than or equal to 0")
-        self.lattice = [None] * (2**(2**inputSize))
+        self.lattice = {}
         
         #bit mask refers to the possible bit values
         #of a given configuration. E.G. boolean functions with 4 inputs
@@ -49,8 +49,7 @@ class DedekindLattice(object):
             self.addAllCombinations(node, possibleConfigurations)
             
         self.monotoneCount = 0
-        for functionIndex in range(0, len(self.lattice)):
-            if self.lattice[functionIndex] != None:
+        for function in self.lattice.items():
                 self.monotoneCount += 1
             
     def addAllCombinations(self, node, possibleConfigurations, configurationsToAdd = []):
@@ -67,15 +66,30 @@ class DedekindLattice(object):
             self.addAllCombinations(node, possibleConfigurations[1:], configurationsToAdd)
         
                 
-        
+    def generateDotFiles(self):
+        import os
+        directoryName = "GeneratedDedekindLattices\\n_" + str(self.inputSize) +"_DedekindLattice\\"
+        if not os.path.exists(directoryName):
+            os.mkdir(directoryName)
+        updateTime = self.monotoneCount/10
+        generatedFiles = 0
+        for function in self.lattice.itervalues():
+            function.writeToDotFile(directoryName)
+            generatedFiles += 1
+            if generatedFiles % updateTime == 0:
+                print generatedFiles, " written so far"
         
 
 
 if __name__ == "__main__":
     import sys
-    if len(sys.argv) != 2:
+    if len(sys.argv) <= 2:
         print "Error: must provide the input size of the Dedekind Lattice"
     inputSize = sys.argv[1]
     dedekind = DedekindLattice(int(inputSize))
     dedekind.fillLattice()
+    
+    if len(sys.argv) > 2:
+        if sys.argv[2] == "true":
+            dedekind.generateDotFiles()
     print dedekind.monotoneCount
