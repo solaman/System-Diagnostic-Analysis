@@ -1,4 +1,6 @@
 # System-Diagnostic-Analysis
+How to run
+python DedekindLattice.py [input size] [output dot and pdf files = boolean]
 TODO:
 1. Testing for DedekindLattice \n
 2. Refactoring \n

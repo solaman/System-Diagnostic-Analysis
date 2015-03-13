@@ -2,52 +2,52 @@ digraph{
         rankdir=BT
         node[shape=circle, style=filled, label=""]
         edge[dir=none]
-b1111 [ color = green, label = "b1111"]
-b111 [ color = red, label = "b111"]
-b1011 [ color = red, label = "b1011"]
-b1101 [ color = green, label = "b1101"]
-b1110 [ color = green, label = "b1110"]
-b11 [ color = red, label = "b11"]
-b101 [ color = red, label = "b101"]
-b110 [ color = red, label = "b110"]
-b1001 [ color = red, label = "b1001"]
-b1010 [ color = red, label = "b1010"]
-b1100 [ color = red, label = "b1100"]
-b1 [ color = red, label = "b1"]
-b10 [ color = red, label = "b10"]
-b100 [ color = red, label = "b100"]
-b1000 [ color = red, label = "b1000"]
-b0 [ color = red, label = "b0"]
-b1111 -> b111
-b1111 -> b1011
-b1111 -> b1101
-b1111 -> b1110
-b111 -> b11
-b1011 -> b11
-b111 -> b101
-b1101 -> b101
-b111 -> b110
-b1110 -> b110
-b1011 -> b1001
-b1101 -> b1001
-b1011 -> b1010
-b1110 -> b1010
-b1101 -> b1100
-b1110 -> b1100
-b11 -> b1
-b101 -> b1
-b1001 -> b1
-b11 -> b10
-b110 -> b10
-b1010 -> b10
-b101 -> b100
-b110 -> b100
-b1100 -> b100
-b1001 -> b1000
-b1010 -> b1000
-b1100 -> b1000
-b1 -> b0
-b10 -> b0
-b100 -> b0
-b1000 -> b0
+1111 [ color = green, label = "1111"]
+0111 [ color = red, label = "0111"]
+1011 [ color = red, label = "1011"]
+1101 [ color = green, label = "1101"]
+1110 [ color = green, label = "1110"]
+0011 [ color = red, label = "0011"]
+0101 [ color = red, label = "0101"]
+0110 [ color = red, label = "0110"]
+1001 [ color = red, label = "1001"]
+1010 [ color = red, label = "1010"]
+1100 [ color = red, label = "1100"]
+0001 [ color = red, label = "0001"]
+0010 [ color = red, label = "0010"]
+0100 [ color = red, label = "0100"]
+1000 [ color = red, label = "1000"]
+0000 [ color = red, label = "0000"]
+1111 -> 0111
+1111 -> 1011
+1111 -> 1101
+1111 -> 1110
+0111 -> 0011
+1011 -> 0011
+0111 -> 0101
+1101 -> 0101
+0111 -> 0110
+1110 -> 0110
+1011 -> 1001
+1101 -> 1001
+1011 -> 1010
+1110 -> 1010
+1101 -> 1100
+1110 -> 1100
+0011 -> 0001
+0101 -> 0001
+1001 -> 0001
+0011 -> 0010
+0110 -> 0010
+1010 -> 0010
+0101 -> 0100
+0110 -> 0100
+1100 -> 0100
+1001 -> 1000
+1010 -> 1000
+1100 -> 1000
+0001 -> 0000
+0010 -> 0000
+0100 -> 0000
+1000 -> 0000
 }

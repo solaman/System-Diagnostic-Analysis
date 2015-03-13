@@ -53,10 +53,12 @@ class DedekindLattice(object):
                 self.monotoneCount += 1
             
     def addAllCombinations(self, node, possibleConfigurations, configurationsToAdd = []):
+        '''
+        given a particular node
+        '''
         if possibleConfigurations == []:
             if configurationsToAdd != []:
                 function = DedekindNode(self.inputSize, configurationsToAdd, node)
-                #print str(function.acceptedConfigurations)
                 self.lattice[ function.getIndex()] = function
                 self.nodeQueue.put(function)
         else:
@@ -68,7 +70,7 @@ class DedekindLattice(object):
                 
     def generateDotFiles(self):
         import os
-        directoryName = "GeneratedDedekindLattices\\n_" + str(self.inputSize) +"_DedekindLattice\\"
+        directoryName = os.path.join("GeneratedDedekindLattices", str(self.inputSize) + "_DedekindLattice")
         if not os.path.exists(directoryName):
             os.mkdir(directoryName)
         updateTime = self.monotoneCount/10
@@ -83,7 +85,7 @@ class DedekindLattice(object):
 
 if __name__ == "__main__":
     import sys
-    if len(sys.argv) <= 2:
+    if len(sys.argv) < 2:
         print "Error: must provide the input size of the Dedekind Lattice"
     inputSize = sys.argv[1]
     dedekind = DedekindLattice(int(inputSize))

@@ -10,17 +10,21 @@ import os
 #Used for Dot file generation
     #Once a node is written to a dot file
     #A full Node is created to help
-fullNode = None
+fullNodes = {}
     
     #Used for Dot file generation
     #Once a node is written to a dot file
     #labels for each configuration are made
-configurationLabels = {}
+configurationLabelss = {}
     
     #Used for Dot file Generation
     #Once a node is written to a dot file
     #edges between configurations are written as dot edges.
-dotEdges = ""
+dotEdgess = {}
+
+#To avoid cost of calculating configuration levels continuously,
+#We will calculate the levels from the very beginning.
+configurationLevelss = {}
 
 class DedekindNode(object):
     '''
@@ -135,13 +139,21 @@ class DedekindNode(object):
         return index
     
     def getConfigurationLevel(self, configuration):
-        return hamming_distance(self.bitMask, configuration)
+        global configurationLevelss
+        if self.inputSize not in configurationLevelss:
+            configurationLevels = [0] *(self.bitMask + 1)
+            for index in range (0, self.bitMask + 1):
+                configurationLevels[index] = hamming_distance(self.bitMask, index)
+                
+            configurationLevelss[self.inputSize] = configurationLevels
+        return configurationLevelss[self.inputSize][configuration]
     
     def writeToDotFile(self, writeLocation):
-        global fullNode, configurationLabels, dotEdges
-        dotFileName = writeLocation + "\\" + "n_"+str(self.inputSize)+"."\
-                       + "world_"+str(self.getIndex())\
-                       + ".dot"
+        global fullNodes, configurationLabelss, dotEdgess
+        
+        dotFileName = os.path.join(writeLocation, "n_" + str(self.inputSize)\
+                                   + "." + "world_" + str(self.getIndex())\
+                                   + ".dot")
         dotFile = open( dotFileName, "w")
         dotFile.write("""digraph{
         rankdir=BT
@@ -149,6 +161,10 @@ class DedekindNode(object):
         edge[dir=none]\n""")
         
         self.initDotVariables()
+        fullNode = fullNodes[self.inputSize]
+        configurationLabels = configurationLabelss[self.inputSize]
+        dotEdges = dotEdgess[self.inputSize]
+        
         configurationList = self.acceptedConfigurationsAsList()
         for configuration in fullNode.acceptedConfigurationsAsList():
             if configuration in configurationList:
@@ -163,22 +179,26 @@ class DedekindNode(object):
         
         dotFile.close()
         
-        pngFileName = dotFileName[:-3]+"png"
-        call("dot -Tpng " + os.getcwd()+"\\" + dotFileName + " -o " + os.getcwd() + "\\"+ pngFileName, shell=True)
+        pngFileName = dotFileName[:-3]+"pdf"
+        call("dot -Tpdf " + os.getcwd()+"\\" + dotFileName + " -o " + os.getcwd() + "\\"+ pngFileName, shell=True)
                         
     def initDotVariables(self):
-        global fullNode, configurationLabels, dotEdges
+        global fullNodes, configurationLabelss, dotEdgess
         '''
         Helper function used to set up variables used for writing
         a Dedekind Node to a dot file.
         '''
-        if fullNode != None:
+        if self.inputSize in fullNodes:
             return
+        configurationLabels = {}
+        dotEdges = ""
         
+        #Take accepted configurations as integers and convert them to binary strings for labeling
         fullNode = DedekindNode(self.inputSize, range(0, self.bitMask+1))
         for configurationLevel in fullNode.acceptedConfigurations:
             for configuration in configurationLevel:
-                configurationLabels[configuration] = bin(configuration)[1:]
+                configurationLabels[configuration] = bin(configuration + self.bitMask+1)[3:]
+               
         for levelIndex in range(1, len(fullNode.acceptedConfigurations) ):
             for configuration in fullNode.acceptedConfigurations[levelIndex]:
                 for parentConfiguration in fullNode.acceptedConfigurations[levelIndex - 1]:
@@ -186,6 +206,10 @@ class DedekindNode(object):
                         edgeString = configurationLabels[parentConfiguration] + " -> " \
                             + configurationLabels[configuration] + "\n"
                         dotEdges += edgeString
+                        
+        fullNodes[self.inputSize] = fullNode
+        configurationLabelss[self.inputSize] = configurationLabels
+        dotEdgess[self.inputSize] = dotEdges
         
                 
                 

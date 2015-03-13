@@ -93,7 +93,7 @@ class Test(unittest.TestCase):
         self.assertRaises( Exception, DedekindNode, (4, self.invalidConfigurations) )
         
     def testWriteToDotFile(self):
-        self.dedekindNode.writeToDotFile()
+        self.dedekindNode.writeToDotFile("")
         testFile = open("writeToDotTest.dot").read()
         toTestFile = open("n_4.world_57344.dot").read()
         self.assertEquals(testFile, toTestFile)
