@@ -31,7 +31,7 @@ class Test(unittest.TestCase):
         '''
         configurationsUpToLevel3 = [15, 14, 13, 11, 7, 10, 12, 6, 5, 9, 3]
         node = DedekindNode(4, configurationsUpToLevel3)
-        possibleCombinations = node.generatePossibleConfigurations()
+        possibleCombinations = node._generatePossibleConfigurations()
         self.assertEquals(set(possibleCombinations), set([8, 4, 2, 1]))
         
     def testGeneratePossibleConfigurationsSatisfiedLevelNoOutput(self):
@@ -47,7 +47,7 @@ class Test(unittest.TestCase):
         '''
         configurations = [31, 30, 29, 27, 23, 15, 28, 7, 14]
         node = DedekindNode(5, configurations)
-        possibleCombinations = node.generatePossibleConfigurations()
+        possibleCombinations = node._generatePossibleConfigurations()
         self.assertEquals(possibleCombinations, [])
         
     def testGeneratePossibleConfigurationsSatisfiedLevelOutput(self):
@@ -63,12 +63,12 @@ class Test(unittest.TestCase):
         '''
         configurations = [31, 30, 29, 27, 23, 15, 28, 14, 13]
         node = DedekindNode(5, configurations)
-        possibleCombinations = node.generatePossibleConfigurations()
+        possibleCombinations = node._generatePossibleConfigurations()
         self.assertEquals(possibleCombinations, [12])
         
         configurations= [31, 30, 29, 27, 23, 15, 28, 7, 14, 22, 13 ]
         node = DedekindNode(5, configurations)
-        possibleCombinations = node.generatePossibleConfigurations()
+        possibleCombinations = node._generatePossibleConfigurations()
         self.assertEquals( set(possibleCombinations), set([12, 6]))
         
     def testGenerateChildren(self):
@@ -94,6 +94,12 @@ class Test(unittest.TestCase):
         
     def testAcceptedConfigurationsAsList(self):
         self.assertEquals(self.dedekindNode.acceptedConfigurationsAsList(), self.orderedConfigurations)
+        
+    def testIsConsistent(self):
+        configurations = [31, 30, 29, 27, 23, 15, 28, 7, 14, 22, 13 ]
+        node = DedekindNode(5, configurations)
+        self.assertTrue( node.isConsistent(29))
+        self.assertFalse(node.isConsistent(8))
         
 #     def testUnorderedConfigurations(self):
 #         dedekindNode = DedekindNode( 4, self.unorderedConfigurations)

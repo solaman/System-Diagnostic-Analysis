@@ -61,7 +61,19 @@ class DedekindNode(object):
                 self.acceptedConfigurations.append( [acceptedConfiguration])
             else:
                 self.acceptedConfigurations[level].append( acceptedConfiguration)
-                                 
+        
+        self.index = -1
+        
+    def isConsistent(self, configuration):
+        '''
+        With regards to System Diagnostics, this function tests if the given configuration
+        is "consistent" with the node/function. I.e. is the configuration an accepted one?
+        '''
+        if ( self.getIndex() & 1 << configuration ) == 0:
+            return False
+        else:
+            return True
+                                      
     def acceptedConfigurationsAsList(self):
         acceptedConfigurations = []
         for level in self.acceptedConfigurations:
@@ -69,7 +81,7 @@ class DedekindNode(object):
             
         return acceptedConfigurations
     
-    def generatePossibleConfigurations(self):
+    def _generatePossibleConfigurations(self):
         '''
         Generates possible configurations to add to the function such that the new functions would be monotone
         (given that this function is monotone). We observe that this can be done by level combinations.
@@ -104,21 +116,6 @@ class DedekindNode(object):
         
         return possibleConfigurations
     
-    def generateChildren(self):
-        '''
-        Generates all Dedekind Nodes that would be considered the children of this
-        DedekindNode
-        '''
-        children = []
-        possibleConfigurations = self.generatePossibleConfigurations()
-
-        for numberOfConfigurations in range(1, len(possibleConfigurations) + 1):
-            combinations = genCombinations(possibleConfigurations, numberOfConfigurations)
-            for combination in combinations:
-                children.append( DedekindNode(self.inputSize, combination, self))
-                
-        return children
-            
     def getLevelOneConfigurations(self):
         '''
         Possible level One configurations are generated uniquely from all others. Given that the current
@@ -132,6 +129,22 @@ class DedekindNode(object):
             
         return levelOneConfigurations
         
+    
+    def generateChildren(self):
+        '''
+        Generates all Dedekind Nodes that would be considered the children of this
+        DedekindNode
+        '''
+        children = []
+        possibleConfigurations = self._generatePossibleConfigurations()
+
+        for numberOfConfigurations in range(1, len(possibleConfigurations) + 1):
+            combinations = genCombinations(possibleConfigurations, numberOfConfigurations)
+            for combination in combinations:
+                children.append( DedekindNode(self.inputSize, combination, self))
+                
+        return children
+    
     def getIndex(self):
         '''
         If we treat each configuration as its own integer value, we can combine each value into an integer
@@ -139,10 +152,14 @@ class DedekindNode(object):
         So an integer of 16 bits, where each bit is for each configuration, will represent the function
         and its accepted configurations. Since this value is unique, we can also use it as an index for the function
         '''
+        if self.index != -1:
+            return self.index
         index = 0
         for configurationLevel in self.acceptedConfigurations:
             for configuration in configurationLevel:
                 index |= (1 << configuration) 
+                
+        self.index = index
         return index
     
     def getConfigurationLevel(self, configuration):
