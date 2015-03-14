@@ -71,6 +71,20 @@ class Test(unittest.TestCase):
         possibleCombinations = node.generatePossibleConfigurations()
         self.assertEquals( set(possibleCombinations), set([12, 6]))
         
+    def testGenerateChildren(self):
+        '''
+        Because GenerateChildren relies on generatePossibleConfigurations,
+        it is sufficient to test that, given that there are more than one child
+        they are generated
+        '''
+        configurations = [31, 30, 29, 27, 23, 15, 28, 7, 14, 22, 13 ]
+        node = DedekindNode(5, configurations)
+        children = node.generateChildren()
+        children = sorted(children, key = lambda child: child.getIndex())
+        self.assertEquals( set(children[0].acceptedConfigurations[-1]), set([6]))
+        self.assertEquals( set(children[1].acceptedConfigurations[-1]), set([12]))
+        self.assertEquals( set(children[2].acceptedConfigurations[-1]), set([6, 12]))
+        
         
     def testGetLevelOneConfigurations(self):
         self.assertEquals(self.dedekindNode.getLevelOneConfigurations(), self.levelOneConfigurations)
@@ -81,9 +95,9 @@ class Test(unittest.TestCase):
     def testAcceptedConfigurationsAsList(self):
         self.assertEquals(self.dedekindNode.acceptedConfigurationsAsList(), self.orderedConfigurations)
         
-    def testUnorderedConfigurations(self):
-        dedekindNode = DedekindNode( 4, self.unorderedConfigurations)
-        self.assertEquals( dedekindNode.acceptedConfigurations, self.orderedConfigurationsByLevel)
+#     def testUnorderedConfigurations(self):
+#         dedekindNode = DedekindNode( 4, self.unorderedConfigurations)
+#         self.assertEquals( dedekindNode.acceptedConfigurations, self.orderedConfigurationsByLevel)
         
     def testBadConfigurations(self):
         '''

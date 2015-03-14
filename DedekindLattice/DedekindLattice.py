@@ -33,41 +33,35 @@ class DedekindLattice(object):
         self.bitMask = 2**(inputSize) - 1
         self.inputSize = inputSize
         
+        self.nodeQueue = Queue()
         
-    def fillLattice(self):
         emptyFunction = DedekindNode(self.inputSize, [])
         self.lattice[ emptyFunction.getIndex()] = emptyFunction
+        self.nodeQueue.put(emptyFunction)
         
         baseFunction = DedekindNode(self.inputSize, [self.bitMask])
-        self.lattice[ baseFunction.getIndex()] = baseFunction
-        
-        self.nodeQueue = Queue()
+        self.lattice[ baseFunction.getIndex()] = baseFunction  
         self.nodeQueue.put(baseFunction)
-        while not self.nodeQueue.empty():
-            node = self.nodeQueue.get()
-            possibleConfigurations = node.generatePossibleConfigurations()
-            self.addAllCombinations(node, possibleConfigurations)
-            
-        self.monotoneCount = 0
-        for function in self.lattice.items():
-                self.monotoneCount += 1
-            
-    def addAllCombinations(self, node, possibleConfigurations, configurationsToAdd = []):
-        '''
-        given a particular node
-        '''
-        if possibleConfigurations == []:
-            if configurationsToAdd != []:
-                function = DedekindNode(self.inputSize, configurationsToAdd, node)
-                self.lattice[ function.getIndex()] = function
-                self.nodeQueue.put(function)
-        else:
-            configurationsToAdd.append( possibleConfigurations[0] )
-            self.addAllCombinations(node, possibleConfigurations[1:], configurationsToAdd)
-            configurationsToAdd.pop(-1)
-            self.addAllCombinations(node, possibleConfigurations[1:], configurationsToAdd)
         
-                
+    def getNextNode(self):     
+        '''
+        Returns the most recently added node to the queue 
+        if it is not empty.
+        '''
+        if self.nodeQueue.empty():
+            return None
+        node = self.nodeQueue.get()
+        children = node.generateChildren()
+        for child in children:
+            self.nodeQueue.put(child)
+            self.lattice[child.getIndex()] = child
+        return node
+        
+        
+    def fillLattice(self):
+        while self.getNextNode() != None:
+            x = 1
+           
     def generateDotFiles(self):
         import os
         directoryName = os.path.join("GeneratedDedekindLattices", str(self.inputSize) + "_DedekindLattice")

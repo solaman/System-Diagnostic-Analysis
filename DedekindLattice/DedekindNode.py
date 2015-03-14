@@ -49,9 +49,6 @@ class DedekindNode(object):
             acceptedConfigurations = temp
         self.acceptedConfigurations = []
         
-        acceptedConfigurations = sorted(acceptedConfigurations, \
-               key=lambda configuration: self.getConfigurationLevel(configuration))
-        
         for acceptedConfiguration in acceptedConfigurations:
             level = self.getConfigurationLevel( acceptedConfiguration)
             if level > len( self.acceptedConfigurations):
@@ -82,11 +79,16 @@ class DedekindNode(object):
         ''' 
         possibleConfigurations = []
         newMaxLevel = len(self.acceptedConfigurations)
+        
+        #current max configuration level is [self.bitMask]
         if newMaxLevel == 1:
             possibleConfigurations = self.getLevelOneConfigurations()
+            
+        #Entire Dedekind Node Lattice is filled, can add [0] as an accepted configuration
         elif newMaxLevel == self.inputSize \
         and len(self.acceptedConfigurations[-1]) == self.inputSize:
-            possibleConfigurations = [0]      
+            possibleConfigurations = [0]
+        #current max configuration level is [] (none are accepted)     
         elif newMaxLevel == 0:
             return []
         elif newMaxLevel< self.inputSize:
@@ -99,18 +101,23 @@ class DedekindNode(object):
                 if self.getConfigurationLevel(possibleConfiguration) == newMaxLevel:
                     possibleConfigurations.append(possibleConfiguration)
             return possibleConfigurations
-            '''
-            possibleConfigurations = {}
-            configurationLevel = self.acceptedConfigurations[-1]
-            for configurationOne in configurationLevel:
-                for configurationTwo in self.acceptedConfigurations[-1][configurationLevel.index(configurationOne)+1:]:
-                    possibleConfiguration = configurationOne & configurationTwo
-                    if self.getConfigurationLevel(possibleConfiguration) == newMaxLevel:
-                        possibleConfigurations[ configurationOne & configurationTwo] = 0
-            possibleConfigurations = possibleConfigurations.keys()
-            '''
         
         return possibleConfigurations
+    
+    def generateChildren(self):
+        '''
+        Generates all Dedekind Nodes that would be considered the children of this
+        DedekindNode
+        '''
+        children = []
+        possibleConfigurations = self.generatePossibleConfigurations()
+
+        for numberOfConfigurations in range(1, len(possibleConfigurations) + 1):
+            combinations = genCombinations(possibleConfigurations, numberOfConfigurations)
+            for combination in combinations:
+                children.append( DedekindNode(self.inputSize, combination, self))
+                
+        return children
             
     def getLevelOneConfigurations(self):
         '''
@@ -194,7 +201,9 @@ class DedekindNode(object):
         dotEdges = ""
         
         #Take accepted configurations as integers and convert them to binary strings for labeling
-        fullNode = DedekindNode(self.inputSize, range(0, self.bitMask+1))
+        configurations = range(0, self.bitMask + 1)
+        configurations = sorted(configurations, key = lambda configuration: self.getConfigurationLevel(configuration))
+        fullNode = DedekindNode(self.inputSize, configurations)
         for configurationLevel in fullNode.acceptedConfigurations:
             for configuration in configurationLevel:
                 configurationLabels[configuration] = bin(configuration + self.bitMask+1)[3:]
