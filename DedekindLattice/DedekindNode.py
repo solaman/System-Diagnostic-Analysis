@@ -40,6 +40,7 @@ class DedekindNode(object):
         then the configuration would be stored at the 3rd level.
         For rudimentary checking, the accepted configurations are added by descending level.
         '''
+        self.childrenSize = 0
         self.inputSize = inputSize
         self.bitMask = self.bitMask = 2**(inputSize) - 1
         

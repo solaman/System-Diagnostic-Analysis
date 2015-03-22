@@ -16,6 +16,10 @@ def analyzeDedekindNode():
 def analyzeDedekindLattice():  
     cProfile.run("lattice.fillLattice()")
     
+def analyzeFindUniqueFunctions():
+    cProfile.run("lattice.findUniqueFunctions()")
+    
 if __name__ == '__main__':
     #analyzeDedekindNode()
-    analyzeDedekindLattice()
+    #analyzeDedekindLattice()
+    analyzeFindUniqueFunctions()
