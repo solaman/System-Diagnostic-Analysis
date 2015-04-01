@@ -20,4 +20,4 @@ Thumbs.db
 
 # Output Files #
 ################
-DedekindLattice/GeneratedDedekindLattices/*
+DedekindLattice/GeneratedDedekindLattices/*/
