@@ -1,6 +1,7 @@
 # System-Diagnostic-Analysis
 How to run
-python DedekindLattice.py [input size] [output dot and pdf files = boolean]
+python Dedekind.py
+type "-help" to see a list of all available commands
 TODO:
 1. Testing for DedekindLattice \n
 2. Refactoring \n

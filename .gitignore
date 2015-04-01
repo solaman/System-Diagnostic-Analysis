@@ -22,3 +22,7 @@ Thumbs.db
 ################
 DedekindLattice/GeneratedDedekindLattices/*
 !DedekindLattice/GeneratedDedekindLattices/preserve.txt
+
+# Experimental Files #
+######################
+**/.noworkflow/**
