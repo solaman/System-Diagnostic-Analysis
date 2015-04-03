@@ -15,21 +15,33 @@ class DedekindLattice(object):
     '''
 
 
-    def __init__(self, inputSize):
+    def __init__(self, inputSize, inputSet = None ):
         '''
         Constructor. For now, we will store each monotone boolean function
         as an object. Future implementations will store them as a single bit
-        for lean memory usage
+        for lean memory usage.
+        @param inputSize- Size of input for the monotone boolean functions (MBF).
+        @param inputSet- Set to use for each monotone boolean function. If
+        the caller wishes to use a python set for interacting with the MBF's can
+        provide one here. Defaults to values found in "resources/setValues.csv"
         '''
+        
         if inputSize < 0:
             raise Exception("Input size must be greater than or equal to 0")
-        self.lattice = {}
+        
+        self.setMapping = {}
+        if inputSet == None:
+            setValues = open("resources/setValues.csv").readAll()
+            setValues = setValues.split(",")
+            
         
         #bit mask refers to the possible bit values
         #of a given configuration. E.G. boolean functions with 4 inputs
         #Will have a bit mask of 0xF
         self.bitMask = 2**(inputSize) - 1
         self.inputSize = inputSize
+        
+        self.lattice = {}
         
         self.emptyFunction = DedekindNode(self.inputSize, [])
         self.lattice[ self.emptyFunction.getIndex()] = self.emptyFunction
