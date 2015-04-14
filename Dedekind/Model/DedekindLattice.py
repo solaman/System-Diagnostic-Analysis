@@ -4,6 +4,8 @@ Created on Feb 26, 2015
 @author: Solaman
 '''
 from DedekindNode import DedekindNode
+from Model.LevelPermutor import LevelPermutor
+from DedekindNode import getIndex
 
 class DedekindLattice(object):
     '''
@@ -32,10 +34,10 @@ class DedekindLattice(object):
         self.inputSize = inputSize
         
         self.emptyFunction = DedekindNode(self.inputSize, [])
-        self.lattice[ self.emptyFunction.getIndex()] = self.emptyFunction
+        self.lattice[ getIndex(self.emptyFunction)] = self.emptyFunction
         
         self.baseFunction = DedekindNode(self.inputSize, [self.bitMask])
-        self.lattice[ self.baseFunction.getIndex()] = self.baseFunction
+        self.lattice[ getIndex(self.baseFunction)] = self.baseFunction
         
     def getNextNode(self):     
         '''
@@ -48,7 +50,7 @@ class DedekindLattice(object):
         children = node.generateChildren()
         for child in children:
             self.nodeList.append(child)
-            self.lattice[child.getIndex()] = child
+            self.lattice[getIndex(child)] = child
         return node
         
         
@@ -66,37 +68,37 @@ class DedekindLattice(object):
         #{"level" : {"isomorphismCount": count, "children" : children } }
         self.nodeList = []
         functionCount = 1
-        self.childrenCounts = {}
         
         self.baseFunction.isVisited = False
         self.baseFunction.parent = None
         self.nodeList.append(self.baseFunction)
+        
+        what = 10000
+        mileMarker = 10000
+        
+        levelPermutor = LevelPermutor(self.inputSize)
         
         while self.nodeList != []:
             node = self.nodeList.pop()
             if node.isVisited == True:
                 if node.parent == None:
                     functionCount += node.childrenCount
+                    print len(self.lattice.keys())
                     return functionCount
-                    continue
                 else:
                     node.parent.childrenCount += node.childrenCount
-                    key = self.getKey(node)
-                    self.childrenCounts[ node.level][key] = node.childrenCount
+                    if node.parent.childrenCount >= what:
+                        print "marker: ", what
+                        what = node.parent.childrenCount * 2
                     continue
             
-            node.level = len(node.acceptedConfigurations) - 1
-            if node.level not in self.childrenCounts:
-                self.childrenCounts [ node.level] = {}
-            
-            node.possibleConfigurations = node._generatePossibleConfigurations()
-            node.possibleConfigurationSize = len(node.possibleConfigurations)
-            key = self.getKey(node)
-            if key in self.childrenCounts[node.level]:
-                node.parent.childrenCount += self.childrenCounts[node.level][ key]
+            if self.getKey(node) in levelPermutor:
+                node.parent.childrenCount += levelPermutor[self.getKey(node)].childrenCount
             else:
-                children = node.generateChildren()
+                self.lattice[ getIndex(node) ] = node
                 node.childrenCount = 1
+                levelPermutor[node.acceptedConfigurations[-1]] = node
+                children = node.generateChildren()
                 node.isVisited = True
                 self.nodeList.append(node)
                 for child in children:
@@ -105,7 +107,12 @@ class DedekindLattice(object):
                     self.nodeList.append(child)
         
     def getKey(self, node):
-        return str(len(node.acceptedConfigurations[node.level])) + "-" + str(node.possibleConfigurationSize)
+        from DedekindNode import getIndex
+        if hasattr(node, "key"):
+            return node.key
+        else:
+            node.key = getIndex(node.acceptedConfigurations[-1])
+        return node.key
                     
             
             

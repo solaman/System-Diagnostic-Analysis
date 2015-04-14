@@ -8,6 +8,12 @@
 *.so
 *.pyc
 
+# Latex Files #
+###############
+*.log
+*.gz
+*.tex
+
 # OS generated files #
 ######################
 .DS_Store
