@@ -83,7 +83,6 @@ class DedekindLattice(object):
             if node.isVisited == True:
                 if node.parent == None:
                     functionCount += node.childrenCount
-                    print len(self.lattice.keys())
                     return functionCount
                 else:
                     node.parent.childrenCount += node.childrenCount

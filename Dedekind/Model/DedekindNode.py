@@ -8,6 +8,7 @@ from subprocess import call
 import os
 from collections import Iterable
 from DedekindNodeIter import DedekindNodeIter
+from DedekindSetMapping import DedekindSetMapping
 
 #Used for Dot file generation
 #Once a node is written to a dot file
@@ -27,6 +28,8 @@ dotEdgess = {}
 #To avoid cost of calculating configuration levels continuously,
 #We will calculate the levels from the very beginning.
 configurationLevelss = {}
+
+mappings = {}
 
 class DedekindNode(Iterable):
     '''
@@ -73,16 +76,6 @@ class DedekindNode(Iterable):
             acceptedConfigurations.extend(level)
             
         return acceptedConfigurations
-        
-    def isConsistent(self, configuration):
-        '''
-        With regards to System Diagnostics, this function tests if the given configuration
-        is "consistent" with the node/function. I.e. is the configuration an accepted one?
-        '''
-        if (getIndex(self) & 1 << configuration ) == 0:
-            return False
-        else:
-            return True
     
     def _generatePossibleConfigurations(self):
         '''
@@ -203,6 +196,21 @@ def initDotVariables(inputSize):
     fullNodes[inputSize] = fullNode
     configurationLabelss[inputSize] = configurationLabels
     dotEdgess[inputSize] = dotEdges
+    
+def isConsistent(node, configuration):
+        '''
+        With regards to System Diagnostics, this function tests if the given configuration
+        is "consistent" with the node/function. I.e. is the configuration an accepted one?
+        '''
+        global mappings
+        if node.inputSize not in mappings:
+            mappings[node.inputSize] = DedekindSetMapping(node.inputSize)
+        if isinstance(configuration, set):
+            configuration = mappings[node.inputSize].getConfAsInt(configuration)
+        if (getIndex(node) & 1 << configuration ) == 0:
+            return False
+        else:
+            return True
         
 def getIndex(configurationList):
     '''

@@ -6,6 +6,7 @@ Created on Mar 3, 2015
 import unittest
 from Model.DedekindNode import DedekindNode
 from Model.DedekindNode import getIndex
+from Model.DedekindNode import isConsistent
 
 class Test(unittest.TestCase):
 
@@ -97,8 +98,8 @@ class Test(unittest.TestCase):
     def testIsConsistent(self):
         configurations = [31, 30, 29, 27, 23, 15, 28, 7, 14, 22, 13 ]
         node = DedekindNode(5, configurations)
-        self.assertTrue( node.isConsistent(29))
-        self.assertFalse(node.isConsistent(8))
+        self.assertTrue( isConsistent(node,29))
+        self.assertFalse(isConsistent(node,8))
         
 #     def testUnorderedConfigurations(self):
 #         dedekindNode = DedekindNode( 4, self.unorderedConfigurations)
