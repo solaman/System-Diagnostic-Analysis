@@ -4,6 +4,21 @@ Created on Apr 2, 2015
 '''
 import resources
 
+mappings = {}
+
+def getConfAsInt(inputConf, inputSize):
+    if inputSize not in mappings:
+        mappings[inputSize] = DedekindSetMapping(inputSize)
+    return mappings[inputSize].getConfAsInt(inputConf)
+
+def getConfAsSet(inputConf, inputSize):
+    if inputSize not in mappings:
+        mappings[inputSize] = DedekindSetMapping(inputSize)
+    return mappings[inputSize].getConfAsSet(inputConf)
+
+def getFullSet(inputSize):
+    return getConfAsSet((1<<inputSize) - 1, inputSize)
+
 class DedekindSetMapping(object):
     '''
     Since the DedekindLattice stores accepted configurations as integers, users of the library
@@ -38,13 +53,14 @@ class DedekindSetMapping(object):
             
         
     def getConfAsSet(self, inputConf):
+        from sets import ImmutableSet
         confSet = set()
         bitShift = 0
         while bitShift <= self.inputSize:
             if 1<<bitShift in self.bitToElement and (1<<bitShift & inputConf):
                 confSet.add( self.bitToElement[1<<bitShift])
             bitShift += 1
-        return confSet
+        return ImmutableSet(confSet)
     
     def getConfAsInt(self, inputConf):
         confInt = 0

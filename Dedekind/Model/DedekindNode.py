@@ -8,7 +8,7 @@ from subprocess import call
 import os
 from collections import Iterable
 from DedekindNodeIter import DedekindNodeIter
-from DedekindSetMapping import DedekindSetMapping
+from DedekindSetMapping import getConfAsInt, getConfAsSet
 
 #Used for Dot file generation
 #Once a node is written to a dot file
@@ -29,8 +29,6 @@ dotEdgess = {}
 #We will calculate the levels from the very beginning.
 configurationLevelss = {}
 
-mappings = {}
-
 class DedekindNode(Iterable):
     '''
     A boolean function. It is up to the user to ensure that it is monotone.
@@ -48,6 +46,7 @@ class DedekindNode(Iterable):
         self.childrenSize = 0
         self.inputSize = inputSize
         self.bitMask = self.bitMask = 2**(inputSize) - 1
+        
         
         if nodeToCopy != None:
             temp = nodeToCopy.acceptedConfigurationsAsList()
@@ -69,6 +68,7 @@ class DedekindNode(Iterable):
                 self.acceptedConfigurations[level].append( acceptedConfiguration)
         
         self.index = -1
+            
         
     def acceptedConfigurationsAsList(self):
         acceptedConfigurations = []
@@ -76,6 +76,12 @@ class DedekindNode(Iterable):
             acceptedConfigurations.extend(level)
             
         return acceptedConfigurations
+    
+    def isAccepted(self, configuration):
+        '''
+        Checks if a configuration would be accepted or not.
+        '''
+        return isAccepted(self, configuration)
     
     def _generatePossibleConfigurations(self):
         '''
@@ -164,7 +170,18 @@ class DedekindNode(Iterable):
         
        # pngFileName = dotFileName[:-3]+"pdf"
        # call("dot -Tpdf " + os.getcwd()+"\\" + dotFileName + " -o " + os.getcwd() + "\\"+ pngFileName, shell=True)
-                        
+                       
+def isAccepted(node, configuration):
+    '''
+    Checks if a configuration would be accepted or not.
+    '''
+    from sets import ImmutableSet
+    if isinstance(configuration, ImmutableSet):
+        configuration = getConfAsInt(configuration, node.inputSize)
+    if (getIndex(node) & 1 << configuration ) == 0:
+        return False
+    else:
+        return True 
 def initDotVariables(inputSize):
     global fullNodes, configurationLabelss, dotEdgess
     '''
@@ -196,21 +213,6 @@ def initDotVariables(inputSize):
     fullNodes[inputSize] = fullNode
     configurationLabelss[inputSize] = configurationLabels
     dotEdgess[inputSize] = dotEdges
-    
-def isConsistent(node, configuration):
-        '''
-        With regards to System Diagnostics, this function tests if the given configuration
-        is "consistent" with the node/function. I.e. is the configuration an accepted one?
-        '''
-        global mappings
-        if node.inputSize not in mappings:
-            mappings[node.inputSize] = DedekindSetMapping(node.inputSize)
-        if isinstance(configuration, set):
-            configuration = mappings[node.inputSize].getConfAsInt(configuration)
-        if (getIndex(node) & 1 << configuration ) == 0:
-            return False
-        else:
-            return True
         
 def getIndex(configurationList):
     '''

@@ -98,7 +98,7 @@ class Test(unittest.TestCase):
     def testIsConsistent(self):
         configurations = [31, 30, 29, 27, 23, 15, 28, 7, 14, 22, 13 ]
         node = DedekindNode(5, configurations)
-        self.assertTrue( isConsistent(node,29))
+        self.assertTrue(isConsistent(node,29))
         self.assertFalse(isConsistent(node,8))
         
 #     def testUnorderedConfigurations(self):

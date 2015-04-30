@@ -7,6 +7,110 @@ from DedekindNode import DedekindNode
 from Model.LevelPermutor import LevelPermutor
 from DedekindNode import getIndex
 
+class LatticeFiller(object):
+    '''
+    Constructed when the Lattice is constructed if the user wants to fill in the 
+    lattice with each Monotone Boolean Function individually.  
+    This class provides a level of abstraction from the inner workings of the module.
+    '''
+    def __init__(self, lattice):
+        self.lattice = lattice
+        self.nodeList = []
+        self.nodeList.append(lattice.baseFunction)
+        self.wasFilled = False
+        
+    def getNextNode(self):
+        '''
+        Returns the most recently added node to the queue 
+        if it is not empty.
+        '''
+        if self.nodeList == []:
+            return None
+        node = self.nodeList.pop()
+        children = node.generateChildren()
+        for child in children:
+            self.nodeList.append(child)
+            self.lattice.lattice[getIndex(child)] = child
+        return node
+    
+    def fillLattice(self):
+        while self.getNextNode() != None:
+            continue
+        self.wasFilled = True
+        
+    def getDedekindNumber(self):
+        if self.wasFilled == False:
+            self.fillLattice()
+        return len(self.lattice.lattice.values())
+        
+class LatticeFillerUnique(object):
+    '''
+    Constructed when the Lattice is constructed if the user would like to fill in
+    the lattice with Monotone Boolean Functions that are equivalent by level.
+    This class provides a level of abstraction from the inner workings of the module.
+    '''
+    def __init__(self, lattice):
+        self.lattice = lattice
+        self.nodeList = []
+        lattice.baseFunction.isVisited = False
+        lattice.baseFunction.parent = None
+        self.nodeList.append(lattice.baseFunction)
+        self.levelPermutor = LevelPermutor(lattice.inputSize)
+        self.mileMarker = 10000
+        
+        self.wasFilled = False
+        
+    def getNextNode(self):
+        #We don't need to compute functions that are isomorphisms of each other.
+        #We store each function by there level, and then counts by the number of possible children for the function
+        #It is proven that functions by level that have the same number of possible children are isomorphisms
+        #{"level" : {"isomorphismCount": count, "children" : children } }
+        if self.nodeList == []:
+            return None
+        node = self.nodeList.pop()
+        if node.isVisited == True:
+            if node.parent == None:
+                return node
+            else:
+                node.parent.childrenCount += node.childrenCount
+                if node.parent.childrenCount >= self.mileMarker:
+                    print "marker: ", self.mileMarker
+                    self.mileMarker = node.parent.childrenCount * 2
+                return self.getNextNode()
+        
+        if self.getKey(node) in self.levelPermutor:
+            node.parent.childrenCount += self.levelPermutor[self.getKey(node)].childrenCount
+            return self.getNextNode()
+        else:
+            self.lattice.lattice[ getIndex(node) ] = node
+            node.childrenCount = 1
+            self.levelPermutor[node.acceptedConfigurations[-1]] = node
+            children = node.generateChildren()
+            node.isVisited = True
+            self.nodeList.append(node)
+            for child in children:
+                child.parent = node
+                child.isVisited = False
+                self.nodeList.append(child)
+            return node
+        
+    def getKey(self, node):
+        if hasattr(node, "key"):
+            return node.key
+        else:
+            node.key = getIndex(node.acceptedConfigurations[-1])
+        return node.key
+        
+    def fillLattice(self):
+        while self.getNextNode() != None:
+            continue
+        self.wasFilled = True
+        
+    def getDedekindNumber(self):
+        if self.wasFilled == False:
+            self.fillLattice()
+        return self.lattice.baseFunction.childrenCount + 1
+        
 class DedekindLattice(object):
     '''
     We aim to generate the Dedekind Lattices using this class. Namely,
@@ -17,7 +121,7 @@ class DedekindLattice(object):
     '''
 
 
-    def __init__(self, inputSize):
+    def __init__(self, inputSize, generateUnique = True):
         '''
         Constructor. For now, we will store each monotone boolean function
         as an object. Future implementations will store them as a single bit
@@ -39,84 +143,19 @@ class DedekindLattice(object):
         self.baseFunction = DedekindNode(self.inputSize, [self.bitMask])
         self.lattice[ getIndex(self.baseFunction)] = self.baseFunction
         
-    def getNextNode(self):     
-        '''
-        Returns the most recently added node to the queue 
-        if it is not empty.
-        '''
-        if self.nodeList == []:
-            return None
-        node = self.nodeList.pop()
-        children = node.generateChildren()
-        for child in children:
-            self.nodeList.append(child)
-            self.lattice[getIndex(child)] = child
-        return node
-        
-        
-    def fillLattice(self):
-        self.nodeList = []
-        self.nodeList.append(self.baseFunction)
-        while self.getNextNode() != None:
-            x = 1
-        self.monotoneCount= len( self.lattice.values())
+        if generateUnique:
+            self.latticeFiller = LatticeFillerUnique(self)
             
-    def findUniqueFunctions(self):
-        #We don't need to compute functions that are isomorphisms of each other.
-        #We store each function by there level, and then counts by the number of possible children for the function
-        #It is proven that functions by level that have the same number of possible children are isomorphisms
-        #{"level" : {"isomorphismCount": count, "children" : children } }
-        self.nodeList = []
-        functionCount = 1
-        
-        self.baseFunction.isVisited = False
-        self.baseFunction.parent = None
-        self.nodeList.append(self.baseFunction)
-        
-        what = 10000
-        mileMarker = 10000
-        
-        levelPermutor = LevelPermutor(self.inputSize)
-        
-        while self.nodeList != []:
-            node = self.nodeList.pop()
-            if node.isVisited == True:
-                if node.parent == None:
-                    functionCount += node.childrenCount
-                    return functionCount
-                else:
-                    node.parent.childrenCount += node.childrenCount
-                    if node.parent.childrenCount >= what:
-                        print "marker: ", what
-                        what = node.parent.childrenCount * 2
-                    continue
-            
-            if self.getKey(node) in levelPermutor:
-                node.parent.childrenCount += levelPermutor[self.getKey(node)].childrenCount
-            else:
-                self.lattice[ getIndex(node) ] = node
-                node.childrenCount = 1
-                levelPermutor[node.acceptedConfigurations[-1]] = node
-                children = node.generateChildren()
-                node.isVisited = True
-                self.nodeList.append(node)
-                for child in children:
-                    child.parent = node
-                    child.isVisited = False
-                    self.nodeList.append(child)
-        
-    def getKey(self, node):
-        from DedekindNode import getIndex
-        if hasattr(node, "key"):
-            return node.key
         else:
-            node.key = getIndex(node.acceptedConfigurations[-1])
-        return node.key
+            self.latticeFiller = LatticeFiller(self)
+            
+    def getDedekindNumber(self):
+        return self.latticeFiller.getDedekindNumber()
+    
+    def getNextNode(self):
+        return self.latticeFiller.getNextNode()
                     
-            
-            
-            
-           
+                  
     def generateDotFiles(self):
         '''
         
@@ -143,7 +182,7 @@ def getDedekindNumber(userInput):
     '''
     inputSize = int(userInput[0])
     dedekindLattice = DedekindLattice(inputSize)
-    print dedekindLattice.findUniqueFunctions()
+    print dedekindLattice.getDedekindNumber()
     
 def generateDotFiles(userInput):
     '''
