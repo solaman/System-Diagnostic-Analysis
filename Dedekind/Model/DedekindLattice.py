@@ -36,11 +36,11 @@ class LatticeFiller(object):
     def fillLattice(self):
         while self.getNextNode() != None:
             continue
-        self.wasFilled = True
         
     def getDedekindNumber(self):
         if self.wasFilled == False:
             self.fillLattice()
+        self.wasFilled = True
         return len(self.lattice.lattice.values())
         
 class LatticeFillerUnique(object):
@@ -49,7 +49,12 @@ class LatticeFillerUnique(object):
     the lattice with Monotone Boolean Functions that are equivalent by level.
     This class provides a level of abstraction from the inner workings of the module.
     '''
-    def __init__(self, lattice):
+    def __init__(self, lattice, lean= False):
+        from Model.DedekindNodeLean import DedekindNodeLean
+        if lean == True:
+            lattice.baseFunction = DedekindNodeLean(lattice.baseFunction.inputSize,\
+                                                    lattice.baseFunction.acceptedConfigurations[-1])
+            
         self.lattice = lattice
         self.nodeList = []
         lattice.baseFunction.isVisited = False
@@ -82,9 +87,9 @@ class LatticeFillerUnique(object):
             node.parent.childrenCount += self.levelPermutor[self.getKey(node)].childrenCount
             return self.getNextNode()
         else:
-            self.lattice.lattice[ getIndex(node) ] = node
+            self.lattice.lattice[ getIndex(node.getAcceptedConfigurationsAsList()) ] = node
             node.childrenCount = 1
-            self.levelPermutor[node.acceptedConfigurations[-1]] = node
+            self.levelPermutor[node.getLastLevel()] = node
             children = node.generateChildren()
             node.isVisited = True
             self.nodeList.append(node)
@@ -98,17 +103,17 @@ class LatticeFillerUnique(object):
         if hasattr(node, "key"):
             return node.key
         else:
-            node.key = getIndex(node.acceptedConfigurations[-1])
+            node.key = getIndex(node.getLastLevel())
         return node.key
         
     def fillLattice(self):
         while self.getNextNode() != None:
             continue
-        self.wasFilled = True
         
     def getDedekindNumber(self):
         if self.wasFilled == False:
             self.fillLattice()
+        self.wasFilled = True
         return self.lattice.baseFunction.childrenCount + 1
         
 class DedekindLattice(object):
@@ -119,7 +124,6 @@ class DedekindLattice(object):
     Future implementations will hopefully be able to dynamically
     Generate a node of a given Lattice.
     '''
-
 
     def __init__(self, inputSize, generateUnique = True):
         '''
@@ -144,7 +148,7 @@ class DedekindLattice(object):
         self.lattice[ getIndex(self.baseFunction)] = self.baseFunction
         
         if generateUnique:
-            self.latticeFiller = LatticeFillerUnique(self)
+            self.latticeFiller = LatticeFillerUnique(self, True)
             
         else:
             self.latticeFiller = LatticeFiller(self)

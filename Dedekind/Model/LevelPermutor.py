@@ -4,7 +4,6 @@ Created on Apr 10, 2015
 @author: Solaman
 '''
 from itertools import permutations
-from DedekindNode import getConfigurationLevel
 from DedekindNode import getIndex
 
 class LevelPermutor(object):

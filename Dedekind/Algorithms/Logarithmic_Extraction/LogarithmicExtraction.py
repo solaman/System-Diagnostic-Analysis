@@ -28,9 +28,9 @@ def computeSingleMISHelper(setDescription, currentConstraints, constraintsToAdd)
     
     #If either subset unioned with the current constraints is inconsistent
     #then an MIS exists in the subset of them
-    if setDescription.isAccepted( currentConstraints.union(constraintsToAddLeft) ):
+    if setDescription.isConsistent( currentConstraints.union(constraintsToAddLeft) ):
         return computeSingleMISHelper(setDescription, currentConstraints, constraintsToAddLeft)
-    if setDescription.isAccepted( currentConstraints.union(constraintsToAddRight)):
+    if setDescription.isConsistent( currentConstraints.union(constraintsToAddRight)):
         return computeSingleMISHelper(setDescription, currentConstraints, constraintsToAddRight)
     
     #If both subsets unioned with the current constraints is consistent

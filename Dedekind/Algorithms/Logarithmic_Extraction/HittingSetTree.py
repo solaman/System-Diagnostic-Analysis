@@ -34,7 +34,7 @@ def computeAllMISHelper(setDescription, constraints, misSet, currPath, paths):
     #if the current set of constraints is consistent
     #Then there cannot be anymore MIS in its subtree
     #so we add the current path to the set of paths enumerated and return. 
-    if not setDescription.isAccepted(constraints):
+    if not setDescription.isConsistent(constraints):
         paths.add(currPath)
         return misSet
     #In order to avoid redundant MIS computations

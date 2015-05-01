@@ -4,11 +4,10 @@ Created on Mar 3, 2015
 @author: Solaman
 '''
 from itertools import combinations as genCombinations
-from subprocess import call
 import os
 from collections import Iterable
 from DedekindNodeIter import DedekindNodeIter
-from DedekindSetMapping import getConfAsInt, getConfAsSet
+from DedekindSetMapping import getConfAsInt
 
 #Used for Dot file generation
 #Once a node is written to a dot file
@@ -49,7 +48,7 @@ class DedekindNode(Iterable):
         
         
         if nodeToCopy != None:
-            temp = nodeToCopy.acceptedConfigurationsAsList()
+            temp = nodeToCopy.getAcceptedConfigurationsAsList()
             temp.extend(acceptedConfigurations)
             acceptedConfigurations = temp
         self.acceptedConfigurations = []
@@ -70,18 +69,18 @@ class DedekindNode(Iterable):
         self.index = -1
             
         
-    def acceptedConfigurationsAsList(self):
+    def getAcceptedConfigurationsAsList(self):
         acceptedConfigurations = []
         for level in self.acceptedConfigurations:
             acceptedConfigurations.extend(level)
             
         return acceptedConfigurations
     
-    def isAccepted(self, configuration):
+    def isConsistent(self, configuration):
         '''
         Checks if a configuration would be accepted or not.
         '''
-        return isAccepted(self, configuration)
+        return isConsistent(self, configuration)
     
     def _generatePossibleConfigurations(self):
         '''
@@ -135,13 +134,21 @@ class DedekindNode(Iterable):
         return children
     
     def __iter__(self):
+        '''
+        Implemented this with good design in mind, however
+        If you want something fast, it is better to use
+        getAcceptedConfigurationsAsList
+        '''
         return DedekindNodeIter(self)
+    
+    def getLastLevel(self):
+        return self.acceptedConfigurations[-1]
     
     def writeToDotFile(self, writeLocation):
         global fullNodes, configurationLabelss, dotEdgess
         
         dotFileName = os.path.join(writeLocation, "n_" + str(self.inputSize)\
-                                   + "." + "world_" + str(getIndex(self))\
+                                   + "." + "world_" + str(getIndex(self.getAcceptedConfigurationsAsList()))\
                                    + ".dot")
         dotFile = open( dotFileName, "w")
         dotFile.write("""digraph{
@@ -154,7 +161,7 @@ class DedekindNode(Iterable):
         configurationLabels = configurationLabelss[self.inputSize]
         dotEdges = dotEdgess[self.inputSize]
         
-        #configurationList = self.acceptedConfigurationsAsList()
+        #configurationList = self.getAcceptedConfigurationsAsList()
         for configuration in fullNode:
             if configuration in self:
                 dotFile.write( configurationLabels[configuration] +" [ color = green, "\
@@ -167,21 +174,19 @@ class DedekindNode(Iterable):
         dotFile.write("}")
         
         dotFile.close()
-        
-       # pngFileName = dotFileName[:-3]+"pdf"
-       # call("dot -Tpdf " + os.getcwd()+"\\" + dotFileName + " -o " + os.getcwd() + "\\"+ pngFileName, shell=True)
-                       
-def isAccepted(node, configuration):
+                 
+def isConsistent(node, configuration):
     '''
     Checks if a configuration would be accepted or not.
     '''
     from sets import ImmutableSet
     if isinstance(configuration, ImmutableSet):
         configuration = getConfAsInt(configuration, node.inputSize)
-    if (getIndex(node) & 1 << configuration ) == 0:
+    if (getIndex(node.getAcceptedConfigurationsAsList()) & 1 << configuration ) == 0:
         return False
     else:
         return True 
+    
 def initDotVariables(inputSize):
     global fullNodes, configurationLabelss, dotEdgess
     '''
@@ -213,7 +218,7 @@ def initDotVariables(inputSize):
     fullNodes[inputSize] = fullNode
     configurationLabelss[inputSize] = configurationLabels
     dotEdgess[inputSize] = dotEdges
-        
+    
 def getIndex(configurationList):
     '''
     If we treat each configuration as its own integer value, we can combine each value into an integer

@@ -12,12 +12,9 @@ lattice = DedekindLattice(5)
 
 def analyzeDedekindNode():
     cProfile.run("node.generatePossibleConfigurations()")
-
-def analyzeDedekindLattice():  
-    cProfile.run("lattice.fillLattice()")
     
 def analyzeFindUniqueFunctions():
-    cProfile.run("lattice.findUniqueFunctions()")
+    cProfile.run("lattice.getDedekindNumber()")
     
 if __name__ == '__main__':
     #analyzeDedekindNode()
