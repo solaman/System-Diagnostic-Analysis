@@ -125,7 +125,7 @@ class DedekindLattice(object):
     Generate a node of a given Lattice.
     '''
 
-    def __init__(self, inputSize, generateUnique = True):
+    def __init__(self, inputSize, generateUnique = True, lean = False):
         '''
         Constructor. For now, we will store each monotone boolean function
         as an object. Future implementations will store them as a single bit
@@ -148,7 +148,7 @@ class DedekindLattice(object):
         self.lattice[ getIndex(self.baseFunction)] = self.baseFunction
         
         if generateUnique:
-            self.latticeFiller = LatticeFillerUnique(self, True)
+            self.latticeFiller = LatticeFillerUnique(self, lean)
             
         else:
             self.latticeFiller = LatticeFiller(self)
@@ -185,7 +185,7 @@ def getDedekindNumber(userInput):
     Values that return within a minute are currently n <= 5.
     '''
     inputSize = int(userInput[0])
-    dedekindLattice = DedekindLattice(inputSize)
+    dedekindLattice = DedekindLattice(inputSize, lean =True)
     print dedekindLattice.getDedekindNumber()
     
 def generateDotFiles(userInput):
