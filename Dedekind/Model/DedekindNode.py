@@ -177,7 +177,11 @@ class DedekindNode(Iterable):
                  
 def isConsistent(node, configuration):
     '''
-    Checks if a configuration would be accepted or not.
+    Checks if a configuration would be deemed "inconsistent".
+    This is confusing! The DedekindNode represents a faulty system, and the
+    "accepted configurations" represent sets such that, if you deemed the given
+    components (represented by bits) as "faulty" and all others as safe, you would explain 
+    erroneous output.
     '''
     from sets import ImmutableSet
     if isinstance(configuration, ImmutableSet):
@@ -185,8 +189,18 @@ def isConsistent(node, configuration):
     if (getIndex(node.getAcceptedConfigurationsAsList()) & 1 << configuration ) == 0:
         return False
     else:
-        return True 
+        return True
     
+def getFullNode(inputSize):
+    global fullNodes
+    if inputSize not in fullNodes:
+        bitMask = (1<<inputSize) - 1
+        configurations = range(0, bitMask + 1)
+        configurations = sorted(configurations, key = lambda configuration: getConfigurationLevel(inputSize, configuration))  
+        fullNodes[inputSize] = DedekindNode(inputSize, configurations)
+        
+    return fullNodes[inputSize]
+
 def initDotVariables(inputSize):
     global fullNodes, configurationLabelss, dotEdgess
     '''

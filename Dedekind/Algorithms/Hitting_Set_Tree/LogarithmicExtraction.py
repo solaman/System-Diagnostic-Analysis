@@ -15,7 +15,7 @@ def computeSingleMIS(setDescription, constraints):
     @param setDescription- A set of rules linking several items together. 
     Think of this as boolean equation in Conjunctive Normal Form.
     @param Constraints- a set of items we would like to include.
-    Think of this as an assignment for the previous boolean equation.
+    Think of this as a value assignment for the previous boolean equation.
     '''
     return computeSingleMISHelper(setDescription, ImmutableSet(), constraints)
 

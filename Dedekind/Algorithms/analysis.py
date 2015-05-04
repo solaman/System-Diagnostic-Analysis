@@ -6,12 +6,19 @@ Created on Apr 28, 2015
 Used to perform analysis on various
 algorithms for computing Minimum Inconsistent Subsets.
 '''
-from Logarithmic_Extraction import HittingSetTree
+from Algorithms.Hitting_Set_Tree import HittingSetTree
+from Algorithms.Random import Random
+from Algorithms.BottomUp import BottomUp
+from Algorithms.TopDown import TopDown
+
 from Model.DedekindLattice import DedekindLattice
 from Model.DedekindSetMapping import getFullSet
 
 algorithms = {}
 algorithms["hitting_set_tree"] = HittingSetTree.computeAllMIS
+algorithms["random"] = Random.computeAllMIS
+algorithms["bottom_up"] = BottomUp.computeAllMIS
+algorithms["top_down"] = TopDown.computeAllMIS
 isAcceptedOriginalFunction = None 
 
 def runAnalysis(algorithmKey = None):
@@ -24,6 +31,8 @@ def runAnalysis(algorithmKey = None):
         return
     minCheck = -1
     maxCheck = 0
+    totalChecks = 0
+    nodeCount = 0
     algorithm = algorithms[algorithmKey]
     lattice = DedekindLattice(5)
     
@@ -37,13 +46,17 @@ def runAnalysis(algorithmKey = None):
         modifyisAccepted(currentNode)
         fullConstraints = getFullSet(5)
         algorithm(currentNode, fullConstraints)
+        
+        nodeCount += 1
+        totalChecks += currentNode.callCount
         if currentNode.callCount > maxCheck:
             maxCheck = currentNode.callCount
         if currentNode.callCount < minCheck or minCheck == -1:
             minCheck = currentNode.callCount
             
             
-    print "min: ", minCheck, "max: ", maxCheck
+    print "min checks: ", minCheck, "max checks: ", maxCheck
+    print "average checks: ", (totalChecks/nodeCount)
       
 def modifyisAccepted(setDescription):
     '''
@@ -55,13 +68,13 @@ def modifyisAccepted(setDescription):
     setDescription.callCount = 0
     setDescription.tries = []
     import types
-    setDescription.isAccepted = types.MethodType(isAccepted, setDescription)
+    setDescription.isConsistent = types.MethodType(isConsistent, setDescription)
     
     
 
   
-def isAccepted(self, configuration):
-    from Model.DedekindNode import isAccepted as isAcceptedOld
+def isConsistent(self, configuration):
+    from Model.DedekindNode import isConsistent as isConsistentOld
     self.callCount += 1
-    return isAcceptedOld(self, configuration)  
+    return isConsistentOld(self, configuration)  
     
