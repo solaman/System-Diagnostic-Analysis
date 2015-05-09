@@ -4,6 +4,7 @@ Created on Apr 23, 2015
 @author: Solaman
 '''
 from LogarithmicExtraction import computeSingleMIS
+import LogarithmicExtraction
 from sets import ImmutableSet
 
 def computeAllMIS(setDescription, constraints):
@@ -19,6 +20,7 @@ def computeAllMIS(setDescription, constraints):
     misSet= set()
     currPath = ImmutableSet() 
     paths = set()
+    LogarithmicExtraction.newRun = True
     computeAllMISHelper(setDescription, constraints,
                                    misSet, currPath, paths)
     return misSet
@@ -44,7 +46,7 @@ def computeAllMISHelper(setDescription, constraints, misSet, currPath, paths):
     #and continue down the tree
     currentMIS = ImmutableSet()
     for mis in misSet:
-        if mis.intersection(currPath) == ImmutableSet():
+        if len(mis.intersection(currPath)) == 0:
             currentMIS = mis
             break
     #If not MIS matches the previous description, we will need to 
@@ -57,3 +59,32 @@ def computeAllMISHelper(setDescription, constraints, misSet, currPath, paths):
     for element in currentMIS:
         childPath = currPath.union( set(element))
         computeAllMISHelper(setDescription, constraints - ImmutableSet(element), misSet, childPath, paths)
+        
+import sets
+def computeAllJust(setDescription, artSet, justSet, curpath, allpaths):
+    '''
+    Implementation of Hitting Set Tree found directly from EulerX.
+    A few modifications are made to ensure that it is compatible with this library's
+    implementation of logarathmic Extraction, otherwise everything else is the same
+    '''
+    for path in allpaths:
+        if path.issubset(curpath):
+            return
+    #must be 'not' to be consistent with this library's implementation. 
+    #Without it, it does not compute the MIS properly
+    #i.e. it does not pass any of the algorithm tests.
+    if not setDescription.isConsistent(artSet):
+        allpaths.add(curpath)
+        return
+    j = sets.Set()
+    for s in justSet:
+        if len(s.intersection(curpath)) == 0:
+            j = s
+    if len(j) == 0:
+        j = computeSingleMIS(setDescription, artSet)
+    if len(j) != 0:
+        justSet.add(j)
+    for a in j:
+        tmpcur = curpath.union( set(a))
+        tmpart = artSet - ImmutableSet(a)
+        computeAllJust(setDescription, tmpart, justSet, tmpcur, allpaths) 

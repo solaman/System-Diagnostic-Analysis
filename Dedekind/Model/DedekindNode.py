@@ -142,7 +142,10 @@ class DedekindNode(Iterable):
         return DedekindNodeIter(self)
     
     def getLastLevel(self):
-        return self.acceptedConfigurations[-1]
+        if len(self.acceptedConfigurations) > 0:
+            return self.acceptedConfigurations[-1]
+        else:
+            return []
     
     def writeToDotFile(self, writeLocation):
         global fullNodes, configurationLabelss, dotEdgess

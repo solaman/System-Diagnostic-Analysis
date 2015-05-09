@@ -5,7 +5,11 @@ Created on Apr 23, 2015
 '''
 import random
 from sets import ImmutableSet
-callCount = 0
+
+#to avoid checking the empty set as an MIS more than once for
+#a given set description, an algorithm can set this to "True" before calling.
+#This way the Logarithmic Extraction will know that the check is not excessive
+newRun = False
 
 def computeSingleMIS(setDescription, constraints):
     '''
@@ -17,7 +21,20 @@ def computeSingleMIS(setDescription, constraints):
     @param Constraints- a set of items we would like to include.
     Think of this as a value assignment for the previous boolean equation.
     '''
-    return computeSingleMISHelper(setDescription, ImmutableSet(), constraints)
+    potentialMIS = computeSingleMISHelper(setDescription, ImmutableSet(), constraints)
+    
+    #The Euler Implentation does not correctly compute the MIS for a set description
+    #where everything is always inconsistent (an empty set is inconsistent)
+    #This makes sense, but this library also considers this set description,
+    #so we must check the empty configuration here.
+    global newRun
+    if newRun == True and len(potentialMIS) == 1 \
+        and setDescription.isConsistent(ImmutableSet()):
+        newRun = False
+        return ImmutableSet()
+    else:
+        newRun = False
+        return potentialMIS
 
 def computeSingleMISHelper(setDescription, currentConstraints, constraintsToAdd):
     if len(constraintsToAdd) <= 1:
@@ -40,5 +57,4 @@ def computeSingleMISHelper(setDescription, currentConstraints, constraintsToAdd)
                                                    currentConstraints.union(constraintsToAddRight), constraintsToAddLeft)
     potentialSolutionRight = computeSingleMISHelper(setDescription,
                                                     currentConstraints.union(potentialSolutionLeft), constraintsToAddRight)
-    return potentialSolutionLeft.union(potentialSolutionRight) 
-    
+    return potentialSolutionLeft.union(potentialSolutionRight)    

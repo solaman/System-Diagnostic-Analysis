@@ -12,7 +12,7 @@ from Algorithms.BottomUp import BottomUp
 from Algorithms.TopDown import TopDown
 
 from Model.DedekindLattice import DedekindLattice
-from Model.DedekindSetMapping import getFullSet
+from Model.DedekindSetMapping import getFullSet, getConfAsSet
 
 algorithms = {}
 algorithms["hitting_set_tree"] = HittingSetTree.computeAllMIS

@@ -16,6 +16,7 @@ class LatticeFiller(object):
     def __init__(self, lattice):
         self.lattice = lattice
         self.nodeList = []
+        self.nodeList.append(lattice.emptyFunction)
         self.nodeList.append(lattice.baseFunction)
         self.wasFilled = False
         
@@ -57,6 +58,9 @@ class LatticeFillerUnique(object):
             
         self.lattice = lattice
         self.nodeList = []
+        lattice.emptyFunction.isVisited = False
+        lattice.emptyFunction.parent = None
+        self.nodeList.append(lattice.emptyFunction)
         lattice.baseFunction.isVisited = False
         lattice.baseFunction.parent = None
         self.nodeList.append(lattice.baseFunction)
