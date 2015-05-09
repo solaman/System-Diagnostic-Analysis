@@ -25,7 +25,7 @@ standardCommands.addCommand("dotFiles", "Generates dot files of all monotone boo
                             + " for a given input size." + "\n\tInput:" + " function input size", generateDotFiles)
 
 standardCommands.addCommand("analyze", "Runs a System-Diagnostic algorithm"\
-                            + " and perform analysis on varying MBF's" +"\n\tInput: algorithm name", runAnalysis )
+                            + " and perform analysis on varying MBF's" +"\n\tInput: algorithm name, input size", runAnalysis )
 standardCommands.addCommand("console", "Run the program as a console.", runConsole)
 
         
