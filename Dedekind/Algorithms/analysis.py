@@ -15,10 +15,10 @@ from Model.DedekindLattice import DedekindLattice
 from Model.DedekindSetMapping import getFullSet, getConfAsSet
 
 algorithms = {}
-algorithms["hitting_set_tree"] = HittingSetTree.computeAllMIS
-algorithms["random"] = Random.computeAllMIS
-algorithms["bottom_up"] = BottomUp.computeAllMIS
-algorithms["top_down"] = TopDown.computeAllMIS
+algorithms["hitting_set_tree"] = HittingSetTree.computeAllMHS
+algorithms["random"] = Random.computeAllMHS
+algorithms["bottom_up"] = BottomUp.computeAllMHS
+algorithms["top_down"] = TopDown.computeAllMHS
 isAcceptedOriginalFunction = None 
 
 

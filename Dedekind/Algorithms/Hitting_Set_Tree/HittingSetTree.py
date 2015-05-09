@@ -7,11 +7,11 @@ from LogarithmicExtraction import computeSingleMIS
 import LogarithmicExtraction
 from sets import ImmutableSet
 
-def computeAllMIS(setDescription, constraints):
+def computeAllMHS(setDescription, constraints):
     '''
     Taken from 'A Hybrid Diagnosis Approach Combining Black-Box
     and White-Box Reasoning'. This attempts to find all Minimal Subset of Constraints
-    that will be inconsistent for the given Set Description.
+    that will be inconsistent for the given Set Description. Or Minimum Hitting Sets.
     @param setDescription- A set of rules linking several items together. 
     Think of this as boolean equation in Conjunctive Normal Form.
     @param Constraints- a set of items we would like to include.
@@ -21,11 +21,11 @@ def computeAllMIS(setDescription, constraints):
     currPath = ImmutableSet() 
     paths = set()
     LogarithmicExtraction.newRun = True
-    computeAllMISHelper(setDescription, constraints,
+    computeAllMHSHelper(setDescription, constraints,
                                    misSet, currPath, paths)
     return misSet
     
-def computeAllMISHelper(setDescription, constraints, misSet, currPath, paths):
+def computeAllMHSHelper(setDescription, constraints, misSet, currPath, paths):
     #paths holds all previously visited paths of the hitting set tree
     #currPath is the current. If any previous path is a subset of this one
     #the we have already computed all MIS that would be found in the current path's subtree.
@@ -58,7 +58,7 @@ def computeAllMISHelper(setDescription, constraints, misSet, currPath, paths):
     #iterate through the children of the current path
     for element in currentMIS:
         childPath = currPath.union( set(element))
-        computeAllMISHelper(setDescription, constraints - ImmutableSet(element), misSet, childPath, paths)
+        computeAllMHSHelper(setDescription, constraints - ImmutableSet(element), misSet, childPath, paths)
         
 import sets
 def computeAllJust(setDescription, artSet, justSet, curpath, allpaths):

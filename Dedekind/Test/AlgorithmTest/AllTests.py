@@ -40,52 +40,52 @@ class Test(unittest.TestCase):
 
 
     def testHittingSetTree(self):
-        answer = HittingSetTree.computeAllMIS(self.dedekindNode, getFullSet(6))
+        answer = HittingSetTree.computeAllMHS(self.dedekindNode, getFullSet(6))
         self.assertEquals( answer, self.answerSet)
         
     def testRandom(self):
-        answer = Random.computeAllMIS(self.dedekindNode, getFullSet(6))
+        answer = Random.computeAllMHS(self.dedekindNode, getFullSet(6))
         self.assertEquals( answer, self.answerSet)
         
     def testTopDown(self):
-        answer = TopDown.computeAllMIS(self.dedekindNode, getFullSet(6))
+        answer = TopDown.computeAllMHS(self.dedekindNode, getFullSet(6))
         self.assertEquals( answer, self.answerSet)
     
         
     def testBottomUp(self):
-        answer = BottomUp.computeAllMIS(self.dedekindNode, getFullSet(6))
+        answer = BottomUp.computeAllMHS(self.dedekindNode, getFullSet(6))
         self.assertEquals( answer, self.answerSet)
         
     def testHittingSetTreeFullNode(self):
-        answer = HittingSetTree.computeAllMIS(self.fullNode, getFullSet(6))
+        answer = HittingSetTree.computeAllMHS(self.fullNode, getFullSet(6))
         self.assertEquals( answer, self.fullAnswerSet)
         
     def testRandomFullNode(self):
-        answer = Random.computeAllMIS(self.fullNode, getFullSet(6))
+        answer = Random.computeAllMHS(self.fullNode, getFullSet(6))
         self.assertEquals( answer, self.fullAnswerSet)
         
     def testTopDownFullNode(self):
-        answer = TopDown.computeAllMIS(self.fullNode, getFullSet(6))
+        answer = TopDown.computeAllMHS(self.fullNode, getFullSet(6))
         self.assertEquals( answer, self.fullAnswerSet)
         
     def testBottomUpFullNode(self):
-        answer = BottomUp.computeAllMIS(self.fullNode, getFullSet(6))
+        answer = BottomUp.computeAllMHS(self.fullNode, getFullSet(6))
         self.assertEquals( answer, self.fullAnswerSet)
         
     def testHittingSetTreeEmptyNode(self):
-        answer = HittingSetTree.computeAllMIS(self.emptyNode, getFullSet(6))
+        answer = HittingSetTree.computeAllMHS(self.emptyNode, getFullSet(6))
         self.assertEquals( answer, self.emptyAnswerSet)
         
     def testRandomEmptyNode(self):
-        answer = Random.computeAllMIS(self.emptyNode, getFullSet(6))
+        answer = Random.computeAllMHS(self.emptyNode, getFullSet(6))
         self.assertEquals( answer, self.emptyAnswerSet)
         
     def testTopDownemptyNode(self):
-        answer = TopDown.computeAllMIS(self.emptyNode, getFullSet(6))
+        answer = TopDown.computeAllMHS(self.emptyNode, getFullSet(6))
         self.assertEquals( answer, self.emptyAnswerSet)
         
     def testBottomUpemptyNode(self):
-        answer = BottomUp.computeAllMIS(self.emptyNode, getFullSet(6))
+        answer = BottomUp.computeAllMHS(self.emptyNode, getFullSet(6))
         self.assertEquals( answer, self.emptyAnswerSet)
 
 
