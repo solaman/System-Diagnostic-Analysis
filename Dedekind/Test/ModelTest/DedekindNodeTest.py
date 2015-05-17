@@ -97,8 +97,8 @@ class Test(unittest.TestCase):
     def testIsConsistent(self):
         configurations = [31, 30, 29, 27, 23, 15, 28, 7, 14, 22, 13 ]
         node = DedekindNode(5, configurations)
-        self.assertTrue(node.isConsistent(29))
-        self.assertFalse(node.isConsistent(8))
+        self.assertFalse(node.isConsistent(29))
+        self.assertTrue(node.isConsistent(8))
         
         
 #     def testUnorderedConfigurations(self):
@@ -114,8 +114,9 @@ class Test(unittest.TestCase):
         
     def testWriteToDotFile(self):
         self.dedekindNode.writeToDotFile("")
-        testFile = open("writeToDotTest.dot").read()
-        toTestFile = open("n_4.world_57344.dot").read()
+        import os, resources
+        testFile = open(os.path.join(os.path.dirname(resources.__file__), "writeToDotTest.dot")).read()
+        toTestFile = open(os.path.join(os.path.dirname(resources.__file__),"n_4.world_57344.dot")).read()
         self.assertEquals(testFile, toTestFile)
         
 

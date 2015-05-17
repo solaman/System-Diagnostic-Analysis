@@ -4,6 +4,7 @@ Created on Apr 2, 2015
 '''
 import unittest
 from Model.DedekindSetMapping import DedekindSetMapping
+from sets import ImmutableSet
         
 class Test(unittest.TestCase):
         
@@ -17,7 +18,7 @@ class Test(unittest.TestCase):
 
     def testGetConfAsSet(self):
         getSetResult = self.setMapping.getConfAsSet(9)
-        self.assertEquals(set({'A', 'D'}), getSetResult)
+        self.assertEquals(ImmutableSet({'A', 'D'}), getSetResult)
         
     def testGetConfAsInt(self):
         getSetResult = self.setMapping.getConfAsInt( set({'A', 'D'}))

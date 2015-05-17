@@ -52,14 +52,14 @@ class Test(unittest.TestCase):
         Asserts that we notify the user if an invalid command was passed.
         '''
         self.commandOptions.selectCommand(["-test"])
-        self.assertEquals(self.testOutput.getvalue(), "Command not recognized, type \"-help\" to list all commands")
+        self.assertEquals(self.testOutput.getvalue(), "Command not recognized, type \"help\" to list all commands\n")
         
     def testselectCommandNoCommand(self):
         '''
         Asserts that we notify the user if no command was passed
         '''
         self.commandOptions.selectCommand([])
-        self.assertEquals(self.testOutput.getvalue(), "Must enter a command, type \"-help\" to list all commands" )
+        self.assertEquals(self.testOutput.getvalue(), "Must enter a command, type \"help\" to list all commands\n" )
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

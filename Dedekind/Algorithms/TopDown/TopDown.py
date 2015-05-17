@@ -5,9 +5,9 @@ Created on May 4, 2015
 '''
 from sets import ImmutableSet
 
-def computeAllMHS(setDescription, constraints):
+def computeAllMIS(setDescription, constraints):
     '''
-    Finds the Minimum Hitting Sets/Minimum Inconsistent Subsets for the given constraints and set Description
+    Finds the Minimal Inconsistent Subsets for the given constraints and set Description
     using a top down approach (where top is full set). We check the powerset of constraints, and rule out possible
     MIS based on whether or not a given set is consistent.
     NOTE: There are probably far more optimal implementations of such an algorithm. However,
@@ -47,13 +47,11 @@ def findMHS(setsToCheck, misSet, setDescription):
             if aSet.issuperset(currentSet) and aSet != currentSet:
                 parentSets.add(aSet)
         
-        if not setDescription.isConsistent(currentSet):
-            for child in childrenSets:
-                setsToCheck.remove(child)
+        if setDescription.isConsistent(currentSet):
+            setsToCheck -= childrenSets
             setsToCheck.remove(currentSet)
         else:
-            for parent in parentSets:
-                setsToCheck.remove(parent)
+            setsToCheck -= parentSets
             
     for currentSet in setsToCheckList:
         if currentSet in setsToCheck:

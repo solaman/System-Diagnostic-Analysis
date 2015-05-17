@@ -7,11 +7,10 @@ from LogarithmicExtraction import computeSingleMIS
 import LogarithmicExtraction
 from sets import ImmutableSet
 
-def computeAllMHS(setDescription, constraints):
+def computeAllMIS(setDescription, constraints):
     '''
     Taken from 'A Hybrid Diagnosis Approach Combining Black-Box
-    and White-Box Reasoning'. This attempts to find all Minimal Subset of Constraints
-    that will be inconsistent for the given Set Description. Or Minimum Hitting Sets.
+    and White-Box Reasoning'. This attempts to find all Minimal Inconsistent Subset of Constraints.
     @param setDescription- A set of rules linking several items together. 
     Think of this as boolean equation in Conjunctive Normal Form.
     @param Constraints- a set of items we would like to include.
@@ -36,7 +35,7 @@ def computeAllMHSHelper(setDescription, constraints, misSet, currPath, paths):
     #if the current set of constraints is consistent
     #Then there cannot be anymore MIS in its subtree
     #so we add the current path to the set of paths enumerated and return. 
-    if not setDescription.isConsistent(constraints):
+    if setDescription.isConsistent(constraints):
         paths.add(currPath)
         return
     #In order to avoid redundant MIS computations

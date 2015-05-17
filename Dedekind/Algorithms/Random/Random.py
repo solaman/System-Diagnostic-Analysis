@@ -6,9 +6,9 @@ Created on May 4, 2015
 from sets import ImmutableSet
 checkedMap = {}
 
-def computeAllMHS(setDescription, constraints):
+def computeAllMIS(setDescription, constraints):
     '''
-    Finds the Minimum Hitting Sets/Minimum Inconsistent Subsets for the given constraints and set Description
+    Finds the Minimal Inconsistent Subsets for the given constraints and set Description
     using a randomized approach. We check the powerset of constraints, and rule out possible
     MIS based on whether or not a given set is consistent.
     NOTE: There are probably far more optimal implementations of such a random algorithm. However,
@@ -55,14 +55,12 @@ def checkRandomSet(setsToCheck, misSet, setDescription):
             misSet.add(chosenSet)
             return
     else:
-        if setDescription.isConsistent(chosenSet):
-            #If consistent, then all parents are consistent and also not MIS
-            for aSet in parentSets:
-                setsToCheck.remove(aSet)
+        if not setDescription.isConsistent(chosenSet):
+            #If inconsistent, then all parents are inconsistent and also not MIS
+            setsToCheck -= parentSets
         else:
-            #If inconsistent, then all children including this one are inconsistent and also not MIS
-            for aSet in childrenSets:
-                setsToCheck.remove(aSet)
+            #If consistent, then all children including this one are consistent and also not MIS
+            setsToCheck -= childrenSets
             setsToCheck.remove(chosenSet)
         checkedMap[chosenSet] = 1
             

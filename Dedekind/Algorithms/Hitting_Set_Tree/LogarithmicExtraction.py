@@ -23,13 +23,13 @@ def computeSingleMIS(setDescription, constraints):
     '''
     potentialMIS = computeSingleMISHelper(setDescription, ImmutableSet(), constraints)
     
-    #The Euler Implentation does not correctly compute the MIS for a set description
+    #The Euler Implementation does not correctly compute the MIS for a set description
     #where everything is always inconsistent (an empty set is inconsistent)
     #This makes sense, but this library also considers this set description,
     #so we must check the empty configuration here.
     global newRun
     if newRun == True and len(potentialMIS) == 1 \
-        and setDescription.isConsistent(ImmutableSet()):
+        and not setDescription.isConsistent(ImmutableSet()):
         newRun = False
         return ImmutableSet()
     else:
@@ -45,9 +45,9 @@ def computeSingleMISHelper(setDescription, currentConstraints, constraintsToAdd)
     
     #If either subset unioned with the current constraints is inconsistent
     #then an MIS exists in the subset of them
-    if setDescription.isConsistent( currentConstraints.union(constraintsToAddLeft) ):
+    if not setDescription.isConsistent( currentConstraints.union(constraintsToAddLeft) ):
         return computeSingleMISHelper(setDescription, currentConstraints, constraintsToAddLeft)
-    if setDescription.isConsistent( currentConstraints.union(constraintsToAddRight)):
+    if not setDescription.isConsistent( currentConstraints.union(constraintsToAddRight)):
         return computeSingleMISHelper(setDescription, currentConstraints, constraintsToAddRight)
     
     #If both subsets unioned with the current constraints is consistent

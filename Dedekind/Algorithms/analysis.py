@@ -12,15 +12,14 @@ from Algorithms.BottomUp import BottomUp
 from Algorithms.TopDown import TopDown
 
 from Model.DedekindLattice import DedekindLattice
-from Model.DedekindSetMapping import getFullSet, getConfAsSet
+from Model.DedekindSetMapping import getFullSet
 
 algorithms = {}
-algorithms["hitting_set_tree"] = HittingSetTree.computeAllMHS
-algorithms["random"] = Random.computeAllMHS
-algorithms["bottom_up"] = BottomUp.computeAllMHS
-algorithms["top_down"] = TopDown.computeAllMHS
+algorithms["hitting_set_tree"] = HittingSetTree.computeAllMIS
+algorithms["random"] = Random.computeAllMIS
+algorithms["bottom_up"] = BottomUp.computeAllMIS
+algorithms["top_down"] = TopDown.computeAllMIS
 isAcceptedOriginalFunction = None 
-
 
 def runAnalysis(args):
     if len(args) != 2:
@@ -42,14 +41,13 @@ def runAnalysis(args):
     lattice = DedekindLattice(inputSize)
     callCounts = {}
     
-    
     while True:
         currentNode = lattice.getNextNode()
         
         if currentNode == None:
             break
         
-        modifyisAccepted(currentNode)
+        modifyIsConsistent(currentNode)
         fullConstraints = getFullSet(inputSize)
         algorithm(currentNode, fullConstraints)
         
@@ -57,8 +55,6 @@ def runAnalysis(args):
             callCounts[currentNode.callCount] = 1
         else:
             callCounts[currentNode.callCount] += 1
-        
-    
     printStatistics(callCounts)
             
 def printStatistics(callCounts):
@@ -88,7 +84,7 @@ def printStatistics(callCounts):
         
     print "mode: ", max( callCounts.keys(), key= lambda x: callCounts[x])
       
-def modifyisAccepted(setDescription):
+def modifyIsConsistent(setDescription):
     '''
     In order to properly analyze an algorithm, we need to check how
     many times it has to call "isAccepted" on the given setDescription.
@@ -99,12 +95,11 @@ def modifyisAccepted(setDescription):
     setDescription.tries = []
     import types
     setDescription.isConsistent = types.MethodType(isConsistent, setDescription)
-    
-    
-
   
 def isConsistent(self, configuration):
     from Model.DedekindNode import isConsistent as isConsistentOld
     self.callCount += 1
     return isConsistentOld(self, configuration)  
+
+
     
